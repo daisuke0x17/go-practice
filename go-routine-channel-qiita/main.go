@@ -31,37 +31,37 @@ func worker(id int, jobs <-chan int, results chan<- int) {
 }
 
 func main() {
-	// go f("goroutineで実行")
-	// f("普通に実行")
-	// fmt.Println("終わり")
+	go f("goroutineで実行")
+	f("普通に実行")
+	fmt.Println("終わり")
 
-	// fmt.Println("--------------------------------------")
+	fmt.Println("--------------------------------------")
 
-	// messages := make(chan string)
-	// go func() {
-	// 	messages <- "Hello"
-	// }()
+	messages := make(chan string)
+	go func() {
+		messages <- "Hello"
+	}()
 
-	// msg := <-messages
-	// fmt.Println(msg)
+	msg := <-messages
+	fmt.Println(msg)
 
-	// fmt.Println("--------------------------------------")
+	fmt.Println("--------------------------------------")
 
-	// ch := make(chan int, 2)
-	// ch <- 1
-	// ch <- 2
-	// // ch <- 3
+	ch := make(chan int, 2)
+	ch <- 1
+	ch <- 2
+	// ch <- 3
 
-	// fmt.Println(<-ch)
-	// fmt.Println(<-ch)
+	fmt.Println(<-ch)
+	fmt.Println(<-ch)
 
-	// fmt.Println("--------------------------------------")
+	fmt.Println("--------------------------------------")
 
-	// pings := make(chan string, 1)
-	// pongs := make(chan string, 1)
-	// ping(pings, "Hello")
-	// pong(pings, pongs)
-	// fmt.Println(<-pongs)
+	pings := make(chan string, 1)
+	pongs := make(chan string, 1)
+	ping(pings, "Hello")
+	pong(pings, pongs)
+	fmt.Println(<-pongs)
 
 	fmt.Println("--------------------------------------")
 
