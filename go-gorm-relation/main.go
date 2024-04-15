@@ -51,7 +51,7 @@ func main() {
 	}
 
 	var tweet []Tweet
-	db.Model(&tweet).Preload("User").Find(&tweet)
+	db.Preload("User").Where("user_id = ?", 1).Find(&tweet)
 	json, err := json.MarshalIndent(tweet, "", "  ")
 	if err != nil {
 		fmt.Println(err)
