@@ -18,7 +18,7 @@ type User struct {
 
 type Tweet struct {
 	ID        int `gorm:"primaryKey;autoIncrement"`
-	UserID    int
+	UserID    int `gorm:"foreignKey:UserID;references:ID"`
 	User      User
 	Text      string
 	CreatedAt time.Time `gorm:"autoCreateTime"`
@@ -31,8 +31,7 @@ func main() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Tweet{})
+	db.AutoMigrate(&User{}, &Tweet{})
 	fmt.Println("migrated")
 
 	var count int64
@@ -43,19 +42,36 @@ func main() {
 		db.Create(&User{Name: "user03"})
 	}
 
+	var user User
+	db.First(&user)
 	db.Model(&Tweet{}).Count(&count)
 	if count == 0 {
-		db.Create(&Tweet{UserID: 1, Text: "tweet01"})
-		db.Create(&Tweet{UserID: 1, Text: "tweet02"})
-		db.Create(&Tweet{UserID: 1, Text: "tweet03"})
+		db.Create(&Tweet{UserID: user.ID, Text: "tweet01"})
+		db.Create(&Tweet{UserID: user.ID, Text: "tweet02"})
+		db.Create(&Tweet{UserID: user.ID, Text: "tweet03"})
 	}
 
+	fmt.Println("===================================================")
+
+	// Preload
 	var tweet []Tweet
-	db.Preload("User").Where("user_id = ?", 1).Find(&tweet)
-	json, err := json.MarshalIndent(tweet, "", "  ")
+	db.Preload("User").Where("user_id = ?", user.ID).Find(&tweet)
+	jsonPreload, err := json.MarshalIndent(tweet, "", "  ")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(string(json))
+	fmt.Println(string(jsonPreload))
+
+	fmt.Println("===================================================")
+
+	// Left Join
+	var tweetJoin Tweet
+	db.Joins("User").First(&tweetJoin)
+	jsonJoin, err := json.MarshalIndent(tweetJoin, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(jsonJoin))
 }
